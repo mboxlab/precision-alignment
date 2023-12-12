@@ -1,4 +1,4 @@
-// Preicsion Alignment maths functions library - By Wenli
+-- Preicsion Alignment maths functions library - By Wenli
 if SERVER then return end
 
 local PA = "precision_align"
@@ -7,9 +7,9 @@ local PA_ = PA .. "_"
 PA_funcs = {}
 PA_funcs.ss_entity = {}
 
-//********************************************************************************************************************//
-// Global  Functions
-//********************************************************************************************************************//
+--********************************************************************************************************************--
+-- Global  Functions
+--********************************************************************************************************************--
 
 local function Message( text )
 	if GetConVarNumber(PA_.."display_messages") == 1 then
@@ -24,9 +24,9 @@ local function Warning( text )
 end
 
 
-// Set view in direction of world position vector v
+-- Set view in direction of world position vector v
 PA_funcs.set_playerview = function( v )
-	if !v then return false end
+	if not v then return false end
 	local ply = LocalPlayer()
 	local pos = ply:GetShootPos()
 	local Ang = (v - pos):Angle()
@@ -34,21 +34,21 @@ PA_funcs.set_playerview = function( v )
 	return Ang
 end
 
-// Sends data to server to move entity - ent1/ent2 are the entities the points are attached to
+-- Sends data to server to move entity - ent1/ent2 are the entities the points are attached to
 PA_funcs.move_entity = function( vec1, vec2, activeent )
-	if !IsValid(activeent) then
+	if not IsValid(activeent) then
 		Warning("No valid entity selected")
 		return false
 	end
 	
-	if !vec1 or !vec2 then
+	if not vec1 or not vec2 then
 		Warning("Incomplete move data")
 		return false
 	end
 	
 	local v = vec2 - vec1
 	
-	// Shift determines whether to stack
+	-- Shift determines whether to stack
 	local shift = LocalPlayer():KeyDown( IN_SPEED )
 	local stack = 0
 	if shift then
@@ -70,22 +70,22 @@ PA_funcs.move_entity = function( vec1, vec2, activeent )
 	return true
 end
 
-// Sends data to server to rotate entity - vector is pivot point
+-- Sends data to server to rotate entity - vector is pivot point
 PA_funcs.rotate_entity = function( ang, vec, relative, activeent )
-	if !IsValid(activeent) then
+	if not IsValid(activeent) then
 		Warning("No valid entity selected")
 		return false
 	end
 	
-	if !ang then
+	if not ang then
 		Warning("Incomplete rotation data")
 		return false
 	end
 	
-	// Rotate by prop origin by default
+	-- Rotate by prop origin by default
 	vec = vec or {}
 	
-	// Shift determines whether to stack
+	-- Shift determines whether to stack
 	local msgstring
 	local shift = LocalPlayer():KeyDown( IN_SPEED )
 	local stack = 0
@@ -100,19 +100,19 @@ PA_funcs.rotate_entity = function( ang, vec, relative, activeent )
 		msgstring = "Rotated Entity "
 	end
 	
-	// Set angles relative to prop
+	-- Set angles relative to prop
 	if relative == 1 then
 		msgstring = msgstring .. "at local angles "
 		
-	// Rotate by world axes
+	-- Rotate by world axes
 	elseif relative == 2 then
 		msgstring = msgstring .. "by world axes "
 	
-	// Rotate by axis/angle, where ang is a vector with magnitude in degrees
+	-- Rotate by axis/angle, where ang is a vector with magnitude in degrees
 	elseif relative == 3 then
 		msgstring = msgstring .. "by axis/angle "
 		
-	// Set absolute angles
+	-- Set absolute angles
 	else
 		relative = 0
 		msgstring = msgstring .. "at angles "
@@ -130,7 +130,7 @@ PA_funcs.rotate_entity = function( ang, vec, relative, activeent )
 end
 
 PA_funcs.construct_exists = function( construct_type, ID )
-	if !construct_type or !ID then return false end
+	if not construct_type or not ID then return false end
 
 	if construct_type == "Point" then
 		if precision_align_points[ID].origin then
@@ -150,14 +150,14 @@ PA_funcs.construct_exists = function( construct_type, ID )
 end
 
 
-//********************************************************************************************************************//
-// Point  Functions
-//********************************************************************************************************************//
+--********************************************************************************************************************--
+-- Point  Functions
+--********************************************************************************************************************--
 
 
 PA_funcs.point_global = function( point )
 	local point_temp = table.Copy( precision_align_points[point] )
-	if !point_temp.origin then
+	if not point_temp.origin then
 		return false
 	end
 	
@@ -177,7 +177,7 @@ end
 PA_funcs.point_local = function( point )
 	local point_temp = table.Copy( precision_align_points[point] )
 	
-	if !point_temp.origin then
+	if not point_temp.origin then
 		return false
 	end
 	
@@ -195,7 +195,7 @@ PA_funcs.point_local = function( point )
 end
 
 PA_funcs.set_point = function( point, origin )
-	if !origin then
+	if not origin then
 		Warning("Incomplete point data")
 		return false
 	end
@@ -227,14 +227,14 @@ PA_funcs.delete_points = function()
 end
 
 PA_funcs.attach_point = function( point, ent )
-	if !precision_align_points[point].origin then
+	if not precision_align_points[point].origin then
 		Warning("Point must be defined before attaching")
 		return false
 	end
 	
 	local attached_ent = precision_align_points[point].entity
 	
-	if !IsValid(ent) then
+	if not IsValid(ent) then
 		if attached_ent then
 			precision_align_points[point].origin = PA_funcs.ss_entity[attached_ent]:SS_LocalToWorld(precision_align_points[point].origin)
 			precision_align_points[point].entity = nil
@@ -282,15 +282,15 @@ PA_funcs.point_function_average = function( points_table )
 end
 
 
-//********************************************************************************************************************//
-// Line  Functions
-//********************************************************************************************************************//
+--********************************************************************************************************************--
+-- Line  Functions
+--********************************************************************************************************************--
 
 
 PA_funcs.line_global = function( line )
 	local line_temp = table.Copy( precision_align_lines[line] )
 	
-	if !line_temp.startpoint or !line_temp.endpoint then
+	if not line_temp.startpoint or not line_temp.endpoint then
 		return false
 	end
 	
@@ -311,7 +311,7 @@ end
 PA_funcs.line_local = function( line )
 	local line_temp = table.Copy( precision_align_lines[line] )
 	
-	if !line_temp.startpoint or !line_temp.endpoint then
+	if not line_temp.startpoint or not line_temp.endpoint then
 		return false
 	end
 	
@@ -331,7 +331,7 @@ end
 
 PA_funcs.set_line = function( line, startpoint, endpoint, direction, length )
 	local ent = precision_align_lines[line].entity
-	if !IsValid(ent) then
+	if not IsValid(ent) then
 		ent = nil
 	end
 	
@@ -343,7 +343,7 @@ PA_funcs.set_line = function( line, startpoint, endpoint, direction, length )
 			precision_align_lines[line].startpoint = startpoint
 		end
 		
-		if !endpoint and !direction then
+		if not endpoint and not direction then
 			Message("Line [" .. tostring(line) .. "] startpoint set at " .. tostring(startpoint))
 			return true
 		end
@@ -364,15 +364,15 @@ PA_funcs.set_line = function( line, startpoint, endpoint, direction, length )
 		return true
 	end
 	
-	if !precision_align_lines[line].startpoint then
+	if not precision_align_lines[line].startpoint then
 		Warning("Line not defined")
 		return false
 	end
 	
 	if direction then
 		local len
-		if !length then
-			//Check to see whether line already exists, if so use that length
+		if not length then
+			--Check to see whether line already exists, if so use that length
 			if PA_funcs.construct_exists( "Line", line ) then
 				len = startpoint_old:Distance( precision_align_lines[line].endpoint )
 			else
@@ -392,7 +392,7 @@ PA_funcs.set_line = function( line, startpoint, endpoint, direction, length )
 	end
 		
 	if length then
-		// true regardless of ent
+		-- true regardless of ent
 		local dir = ( precision_align_lines[line].endpoint - precision_align_lines[line].startpoint ):GetNormal()
 		new_endpoint = precision_align_lines[line].startpoint + dir * length
 		Message("Line [" .. tostring(line) .. "] length set to " .. tostring(len))
@@ -417,14 +417,14 @@ PA_funcs.delete_lines = function()
 end
 
 PA_funcs.attach_line = function( line, ent )
-	if !precision_align_lines[line].startpoint or !precision_align_lines[line].endpoint then
+	if not precision_align_lines[line].startpoint or not precision_align_lines[line].endpoint then
 		Warning("Line must be defined before attaching")
 		return false
 	end
 	
 	local attached_ent = precision_align_lines[line].entity
 	
-	if !IsValid(ent) then
+	if not IsValid(ent) then
 		if attached_ent then
 			precision_align_lines[line].startpoint = PA_funcs.ss_entity[attached_ent]:SS_LocalToWorld(precision_align_lines[line].startpoint)
 			precision_align_lines[line].endpoint = PA_funcs.ss_entity[attached_ent]:SS_LocalToWorld(precision_align_lines[line].endpoint)
@@ -473,15 +473,15 @@ PA_funcs.line_function_perpendicular = function( lineID1, lineID2 )
 end
 
 
-//********************************************************************************************************************//
-// Plane  Functions
-//********************************************************************************************************************//
+--********************************************************************************************************************--
+-- Plane  Functions
+--********************************************************************************************************************--
 
 
 PA_funcs.plane_global = function( plane )
 	local plane_temp = table.Copy(precision_align_planes[plane])
 	
-	if !plane_temp.origin or !plane_temp.normal then
+	if not plane_temp.origin or not plane_temp.normal then
 		return false
 	end
 	
@@ -502,7 +502,7 @@ end
 PA_funcs.plane_local = function( plane )
 	local plane_temp = table.Copy(precision_align_planes[plane])
 	
-	if !plane_temp.origin or !plane_temp.normal then
+	if not plane_temp.origin or not plane_temp.normal then
 		return false
 	end
 	
@@ -531,7 +531,7 @@ PA_funcs.set_plane = function( plane, origin, normal )
 		end
 	end
 	
-	if !precision_align_planes[plane].origin then
+	if not precision_align_planes[plane].origin then
 		Warning("Plane not defined")
 		return false
 	end
@@ -570,14 +570,14 @@ PA_funcs.delete_planes = function()
 end
 
 PA_funcs.attach_plane = function( plane, ent )
-	if !precision_align_planes[plane].origin or !precision_align_planes[plane].normal then
+	if not precision_align_planes[plane].origin or not precision_align_planes[plane].normal then
 		Warning("Plane must be defined before attaching")
 		return false
 	end
 	
 	local attached_ent = precision_align_planes[plane].entity
 	
-	if !IsValid(ent) then
+	if not IsValid(ent) then
 		if attached_ent then
 			precision_align_planes[plane].origin = PA_funcs.ss_entity[attached_ent]:SS_LocalToWorld(precision_align_planes[plane].origin)
 			precision_align_planes[plane].normal = ( PA_funcs.ss_entity[attached_ent]:SS_LocalToWorld(precision_align_planes[plane].normal) - PA_funcs.ss_entity[attached_ent]:SS_GetPos() ):GetNormal()
@@ -623,13 +623,13 @@ PA_funcs.plane_function_perpendicular = function( planeID1, planeID2 )
 end
 
 
-//********************************************************************************************************************//
-// Combined  Functions
-//********************************************************************************************************************//
+--********************************************************************************************************************--
+-- Combined  Functions
+--********************************************************************************************************************--
 
 
-// Solve simultaneous equations in form:
-// a1 + b1 = c1,    a2 + b2 = c2
+-- Solve simultaneous equations in form:
+-- a1 + b1 = c1,    a2 + b2 = c2
 local function solve_simultaneous_2( a1, b1, c1, a2, b2, c2 )
 	local d = a1 * b2 - b1 * a2
 	if d == 0 then
@@ -647,7 +647,7 @@ local function solve_point_2line_intersection( line1, line2 )
 	local B = line2.endpoint - line2.startpoint
 	local normal = (A:Cross(B)):GetNormal()
 	
-	// Check lines are not parallel
+	-- Check lines are not parallel
 	if normal:Length() == 0 then
 		Warning("Cannot find intercept of two parallel lines")
 		return false
@@ -663,9 +663,9 @@ local function solve_point_2line_intersection( line1, line2 )
 	b2 = -B:Dot(B)
 	c2 = B:Dot(C)
 	
-	// solve simultaneous
+	-- solve simultaneous
 	local length1, length2 = solve_simultaneous_2( a1, b1, c1, a2, b2, c2 )
-	if !length1 or !length2 then return false end
+	if not length1 or not length2 then return false end
 	
 	local dir1, dir2 = A:GetNormal(), B:GetNormal()
 	
@@ -691,7 +691,7 @@ PA_funcs.point_lineplane_intersection = function( lineID, planeID )
 	local A = line.endpoint - line.startpoint
 	local normal = plane.normal
 	
-	// Check line and plane are not parallel
+	-- Check line and plane are not parallel
 	if normal:Dot(A) == 0 then
 		Warning("Cannot find intercept of parallel line and plane")
 		return false
@@ -708,7 +708,7 @@ PA_funcs.line_2plane_intersection = function( planeID1, planeID2 )
 	
 	local dir = plane1.normal:Cross(plane2.normal)
 	
-	// Check planes are not parallel
+	-- Check planes are not parallel
 	if dir:Length() == 0 then
 		Warning("Cannot find intersection of two parallel planes")
 		return false
@@ -720,7 +720,7 @@ PA_funcs.line_2plane_intersection = function( planeID1, planeID2 )
 	line2.startpoint = plane2.origin
 	line2.endpoint = plane2.origin + plane2.normal:Cross(dir)
 	
-	// Construct solved line
+	-- Construct solved line
 	local line = {}
 	line.startpoint = solve_point_2line_intersection( line1, line2 )
 	line.direction = dir:GetNormal()	-- returns point/direction format as other functions will calculate endpoint anyway
@@ -733,7 +733,7 @@ PA_funcs.point_3plane_intersection = function( planeID1, planeID2, planeID3 )
 	local plane2 = PA_funcs.plane_global( planeID2 )
 	local plane3 = PA_funcs.plane_global( planeID3 )
 	
-	// Check plane normals are not parallel
+	-- Check plane normals are not parallel
 	local product = plane1.normal:Dot(plane2.normal:Cross(plane3.normal))
 	if product == 0 then
 		Warning("One or more planes are parallel, no unique point found")
@@ -743,9 +743,9 @@ PA_funcs.point_3plane_intersection = function( planeID1, planeID2, planeID3 )
 	end
 	
 	local line = PA_funcs.line_2plane_intersection( planeID1, planeID2 )
-	if !line then return false end
+	if not line then return false end
 	
-	// Calculate line/plane intercept
+	-- Calculate line/plane intercept
 	local length = plane3.normal:Dot(plane3.origin - line.startpoint) / plane3.normal:Dot(line.direction)
 	local point = line.startpoint + line.direction * length
 	return point
@@ -769,7 +769,7 @@ PA_funcs.point_plane_projection = function( pointID, planeID )
 	local point = PA_funcs.point_global( pointID )
 	local plane = PA_funcs.plane_global( planeID )
 	
-	//Same method as for line/plane intersection
+	--Same method as for line/plane intersection
 	local normal = plane.normal
 	
 	local length = normal:Dot(plane.origin - point.origin)
@@ -777,7 +777,7 @@ PA_funcs.point_plane_projection = function( pointID, planeID )
 	return vec
 end
 
-// These are general functions for mirroring vectors
+-- These are general functions for mirroring vectors
 PA_funcs.point_mirror = function( vec, origin, normal )
 	local length = normal:Dot( origin - vec )
 	local vec1 = vec + normal * length * 2
@@ -833,9 +833,9 @@ PA_funcs.plane_3points = function( pointID1, pointID2, pointID3 )
 end
 
 
-//********************************************************************************************************************//
-// Rotation  Functions
-//********************************************************************************************************************//
+--********************************************************************************************************************--
+-- Rotation  Functions
+--********************************************************************************************************************--
 
 
 local function matrix_x_vector( matrix, v )
@@ -863,27 +863,27 @@ local function matrix_transpose( matrix )
 end
 
 
-// Rotate angle by world angles
+-- Rotate angle by world angles
 PA_funcs.rotate_world = function( ang, rotang )
-	if rotang.p != 0 then
+	if rotang.p ~= 0 then
 		ang:RotateAroundAxis( Vector(0,1,0), rotang.p )
 	end
-	if rotang.y != 0 then
+	if rotang.y ~= 0 then
 		ang:RotateAroundAxis( Vector(0,0,1), rotang.y )
 	end
-	if rotang.r != 0 then
+	if rotang.r ~= 0 then
 		ang:RotateAroundAxis( Vector(1,0,0), rotang.r )
 	end
 
 	return ang
 end
 
-// Rotate line 1 so it ends up in same direction as line 2
+-- Rotate line 1 so it ends up in same direction as line 2
 PA_funcs.rotate_2lines_parallel = function( pivot, lineID1, lineID2, activeent )
 	local line1 = PA_funcs.line_global( lineID1 )
 	local line2 = PA_funcs.line_global( lineID2 )
 	
-	if !pivot then
+	if not pivot then
 		pivot = line1.startpoint
 	end
 	
@@ -903,12 +903,12 @@ PA_funcs.rotate_2lines_parallel = function( pivot, lineID1, lineID2, activeent )
 	return PA_funcs.rotate_entity(ang, pivot, 0, activeent)
 end
 
-// Rotate plane 1 normal to match plane 2 normal
+-- Rotate plane 1 normal to match plane 2 normal
 PA_funcs.rotate_2planes_parallel = function( pivot, planeID1, planeID2, activeent )
 	local plane1 = PA_funcs.plane_global( planeID1 )
 	local plane2 = PA_funcs.plane_global( planeID2 )
 	
-	if !pivot then
+	if not pivot then
 		pivot = plane1.origin
 	end
 	
@@ -928,8 +928,8 @@ PA_funcs.rotate_2planes_parallel = function( pivot, planeID1, planeID2, activeen
 	return PA_funcs.rotate_entity(ang, pivot, 0, activeent)
 end
 
-// NOT USED CURRENTLY ***********************
-// Rotate line so it ends up in same direction as plane normal
+-- NOT USED CURRENTLY ***********************
+-- Rotate line so it ends up in same direction as plane normal
 -- function rotate_lines_planenormal_parallel( pivot, lineID, planeID, activeent )
 	-- local line = PA_funcs.line_global( lineID )
 	-- local plane = PA_funcs.plane_global( planeID )
@@ -950,7 +950,7 @@ end
 	-- return PA_funcs.rotate_entity(ang, pivot, activeent)
 -- end
 
-// Rotate line until parallel to plane
+-- Rotate line until parallel to plane
 PA_funcs.rotate_line_plane_parallel = function( pivot, axis, lineID, planeID, activeent )
 	local line = PA_funcs.line_global( lineID )
 	local plane = PA_funcs.plane_global( planeID )
@@ -968,7 +968,7 @@ PA_funcs.rotate_line_plane_parallel = function( pivot, axis, lineID, planeID, ac
 		elseif axisdir == linedir1 or axisdir == -linedir1 then
 			Warning("Rotation axisdir is normal to line")
 			return false
-		// Calculate whether axis/plane angle is not more than axis/line angle
+		-- Calculate whether axis/plane angle is not more than axis/line angle
 		elseif math.asin(axisdir:Dot(normal)) > math.acos(axisdir:Dot(linedir1)) then
 			Warning("Line cannot be rotated parallel to plane along this axis!")
 			return false
@@ -977,7 +977,7 @@ PA_funcs.rotate_line_plane_parallel = function( pivot, axis, lineID, planeID, ac
 		axisdir = normal:Cross(linedir1):GetNormal()
 	end
 	
-	// Transform everything relative to plane/axis directions
+	-- Transform everything relative to plane/axis directions
 	local M = {
 		-axisdir:Cross(normal):Cross(normal):GetNormal(),
 		axisdir:Cross(normal):GetNormal(),
@@ -986,30 +986,30 @@ PA_funcs.rotate_line_plane_parallel = function( pivot, axis, lineID, planeID, ac
 	
 	local MT = matrix_transpose(M)
 	
-	// Now we just have to set Z = 0 after transform
+	-- Now we just have to set Z = 0 after transform
 	local normal2 = Vector(0,0,1)
 	local axisdir2 = matrix_x_vector( M, axisdir )
 	local linedir2 = matrix_x_vector( M, linedir1 )
 	
-	// Did the maths, ends up with a quadratic, solving for x component of line
-	// Quadratic formula
+	-- Did the maths, ends up with a quadratic, solving for x component of line
+	-- Quadratic formula
 	local a = axisdir2.x^2 - axisdir2.y^2
 	local c = axisdir2.y^2 - (linedir2:Dot(axisdir2))^2
 	
-	// 2 solutions
+	-- 2 solutions
 	local x1 = math.sqrt(-4 * a * c) / (2 * a)
 	local y1 = math.sqrt(1 - x1^2)
 	
 	local y2 = -y1
 	local x2 = math.sqrt(1 - y2^2)
 	
-	// Find rotation angle given the start/final line directions
+	-- Find rotation angle given the start/final line directions
 	local function solver(x, y)
-		// Vec is the rotated direction of the line
+		-- Vec is the rotated direction of the line
 		local Vec = Vector(x, y, 0)
 		Vec = matrix_x_vector( MT, Vec ):GetNormal()
 		
-		// Radial line directions around axis
+		-- Radial line directions around axis
 		local v1 = ( linedir1 - axisdir * (linedir1:Dot(axisdir)) ):GetNormal()
 		local v2 = ( Vec - axisdir * (Vec:Dot(axisdir)) ):GetNormal()
 		
@@ -1022,7 +1022,7 @@ PA_funcs.rotate_line_plane_parallel = function( pivot, axis, lineID, planeID, ac
 		-- Warning("Ang: " .. tostring(Ang))
 	
 	
-		// Handedness is important - determines which way to rotate the vector
+		-- Handedness is important - determines which way to rotate the vector
 		local Handedness = v1:Dot(v2:Cross(axisdir2))
 		
 		if Handedness < 0 then
@@ -1034,25 +1034,25 @@ PA_funcs.rotate_line_plane_parallel = function( pivot, axis, lineID, planeID, ac
 	
 	local Ang = solver(x1, y1)
 	
-	// Determine which way around to rotate
+	-- Determine which way around to rotate
 	
 	if math.abs(Ang) < 0.5 then
-		// Find second solution
+		-- Find second solution
 		Ang = solver(x2, y2) 
 	end
 	
 	local ang = PA_funcs.ss_entity[activeent]:GetAngles()
 	ang:RotateAroundAxis( axisdir, Ang )
 	
-	// Use axis as pivot by default
-	if !pivot and axis then
+	-- Use axis as pivot by default
+	if not pivot and axis then
 		pivot = axis.startpoint
 	end
 	
 	return PA_funcs.rotate_entity( ang, pivot, 0, activeent )
 end
 
-// Numerical solution
+-- Numerical solution
 -- function PA_funcs.rotate_line_plane_parallel( pivot, axis, lineID, planeID, activeent )
 	-- local line = PA_funcs.line_global( lineID )
 	-- local plane = PA_funcs.plane_global( planeID )
@@ -1070,7 +1070,7 @@ end
 		-- elseif axisdir == linedir1 or axisdir == -linedir1 then
 			-- Warning("Rotation axisdir is normal to line")
 			-- return false
-		-- // Calculate whether axis/plane angle is not more than axis/line angle
+		-- -- Calculate whether axis/plane angle is not more than axis/line angle
 		-- elseif math.asin(axisdir:Dot(normal)) > math.acos(axisdir:Dot(linedir1)) then
 			-- Warning("Line cannot be rotated parallel to plane along this axis!")
 			-- return false
@@ -1081,7 +1081,7 @@ end
 	
 	-- local dir
 	
-	-- // Max and min angles of rotation
+	-- -- Max and min angles of rotation
 	-- local ang1 = 0
 	-- local ang2 = axisdir:Cross(linedir1):Cross(axisdir)
 	
@@ -1093,7 +1093,7 @@ end
 	-- end
 	
 	
-	-- // Use axis as pivot by default
+	-- -- Use axis as pivot by default
 	-- if !pivot and axis then
 		-- pivot = axis.startpoint
 	-- end
@@ -1102,7 +1102,7 @@ end
 -- end
 
 
-// Mirror about selected plane
+-- Mirror about selected plane
 PA_funcs.plane_mirror_entity = function( planeID, activeent )
 	local plane = PA_funcs.plane_global( planeID )
 	local origin = plane.origin
@@ -1114,7 +1114,7 @@ PA_funcs.plane_mirror_entity = function( planeID, activeent )
 		stack = GetConVarNumber( PA_.."stack_num" )
 	end
 	
-	// Mirror by concommand directly
+	-- Mirror by concommand directly
 	RunConsoleCommand( PA_.. "mirror",	tostring(origin.x), tostring(origin.y), tostring(origin.z),
 										tostring(normal.x), tostring(normal.y), tostring(normal.z),
 										tostring(stack) )
