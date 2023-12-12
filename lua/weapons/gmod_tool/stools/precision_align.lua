@@ -31,6 +31,13 @@ function EntityMT:SS_LocalToWorld(ent)
 		return self:LocalToWorld(ent)
 	end
 end
+function EntityMT:SS_LocalToWorldAngles(ent)
+	if InfMap then 
+		return self:InfMap_LocalToWorldAngles(ent)
+	else
+		return self:LocalToWorldAngles(ent)
+	end
+end
 
 if SERVER then 
 	util.AddNetworkString( "PA_serverside_correction" ) 

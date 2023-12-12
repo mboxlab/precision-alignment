@@ -2392,10 +2392,6 @@ function ROTATION_TAB:Init()
 				else
 					ent = PA_funcs.ss_entity[PA_activeent]
 				end
-				if not ent then 
-					chat.AddText("Нет выбранного Entity!")
-					return 
-				end
 				ang = self.sliders_angle1:GetValues()
 				ang = ent:SS_LocalToWorldAngles( ToAngle(ang) )
 				self.sliders_angle1:SetValues( ToVector(ang) )
