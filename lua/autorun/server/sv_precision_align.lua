@@ -327,7 +327,8 @@ end
 cleanup.Register( "stacks" )
 
 -- Create the undo function at the end of each stack_ID queue
-local function Stack_Undo( undo_table ) -- if table.Count( undo_table ) == 0 then return end
+local function Stack_Undo( undo_table ) -- 
+	if table.Count( undo_table ) == 0 then return end
 	local ply = undo_table[1].ply
 	
 	local model = ""
@@ -357,6 +358,7 @@ local function Stack_Loop()
 		if not r then
 			ErrorNoHalt( e, "\n" )
 		else
+			if not e then return true end
 			-- Create undo if stack_IDs are different
 			if not stackID_old then
 				stackID_old = e.stackID
