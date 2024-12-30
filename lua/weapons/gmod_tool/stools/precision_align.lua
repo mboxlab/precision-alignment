@@ -184,28 +184,28 @@ end
 
 if SERVER then
 
-	local track_ents = {}
+	local track_ents = setmetatable({}, {__mode = "k"})
 
 	hook.Add( "Think", "PA_SS_TRACK_ENTS", function()
 		for a, b in pairs( track_ents ) do
 
-			if not IsValid(b.Entity) then
-				table.RemoveByValue(track_ents,b)
+			if not IsValid(a) then
+				track_ents[a] = nil
 				goto C
 			end
 
-			if b.storedPos ~= b.Entity:SS_GetPos() or b.storedAng ~= b.Entity:GetAngles() then
+			if b.storedPos ~= a:SS_GetPos() or b.storedAng ~= a:GetAngles() then
 				net.Start( "PA_serverside_correction" )
-				net.WriteFloat(b.Entity:SS_GetPos()[1])
-				net.WriteFloat(b.Entity:SS_GetPos()[2])
-				net.WriteFloat(b.Entity:SS_GetPos()[3])
-				net.WriteFloat(b.Entity:GetAngles()[1])
-				net.WriteFloat(b.Entity:GetAngles()[2])
-				net.WriteFloat(b.Entity:GetAngles()[3])
-				net.WriteEntity(b.Entity)
-				net.Send( b.ply )
-				b.storedPos = b.Entity:SS_GetPos()
-				b.storedAng = b.Entity:GetAngles()
+				net.WriteFloat(a:SS_GetPos()[1])
+				net.WriteFloat(a:SS_GetPos()[2])
+				net.WriteFloat(a:SS_GetPos()[3])
+				net.WriteFloat(a:GetAngles()[1])
+				net.WriteFloat(a:GetAngles()[2])
+				net.WriteFloat(a:GetAngles()[3])
+				net.WriteEntity(a)
+				net.Send( b.plys )
+				b.storedPos = a:SS_GetPos()
+				b.storedAng = a:GetAngles()
 			end
 			::C::
 		end
@@ -226,12 +226,12 @@ if SERVER then
 			net.WriteEntity(ent)
 			net.Send( self:GetOwner() )
 
-			local data = {}
-			data.Entity = ent
-			data.storedPos = ent:SS_GetPos()
-			data.storedAng = ent:GetAngles()
-			data.ply = self:GetOwner()
-			if not IsValid(track_ents[data]) then table.insert(track_ents,data) end
+			track_ents[ent] = track_ents[ent] or {
+				plys = RecipientFilter()
+			}
+			track_ents[ent].storedPos = ent:SS_GetPos()
+			track_ents[ent].storedAng = ent:GetAngles()
+			track_ents[ent].plys:AddPlayer(self:GetOwner())
 		end
 
 		net.Start( PA_ .. "click" )
@@ -271,14 +271,12 @@ if SERVER then
 			net.WriteEntity(ent)
 			--net.WriteEntity(activeent)
 			net.Send( self:GetOwner() )
-
-			local data = {}
-			data.Entity = ent
-			data.storedPos = ent:SS_GetPos()
-			data.storedAng = ent:GetAngles()
-			data.ply = self:GetOwner()
-			if not IsValid(track_ents[data]) then table.insert(track_ents,data) end
-
+			track_ents[ent] = track_ents[ent] or {
+				plys = RecipientFilter()
+			}
+			track_ents[ent].storedPos = ent:SS_GetPos()
+			track_ents[ent].storedAng = ent:GetAngles()
+			track_ents[ent].plys:AddPlayer(self:GetOwner())
 		end
 		local function Deselect( ent )
 			if IsValid( ent ) and ent.PA then
