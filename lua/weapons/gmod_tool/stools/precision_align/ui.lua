@@ -347,6 +347,7 @@ local FUNCTION_BUTTON_2 = {}
 
 function FUNCTION_BUTTON_2:Init()
 	self:SetSize(130, 25)
+	self:SetTextColor(color_white)
 	table.insert(function_buttons_2_list, self)
 	
 	self.DoClick = function()
