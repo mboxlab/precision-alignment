@@ -5,11 +5,12 @@ local PA = "precision_align"
 local PA_ = PA .. "_"
 
 PA_funcs = {}
-PA_funcs.ss_entity = {}
+
 
 --********************************************************************************************************************--
 -- Global  Functions
 --********************************************************************************************************************--
+
 
 local function Message( text )
 	if GetConVarNumber(PA_.."display_messages") == 1 then
@@ -26,7 +27,7 @@ end
 
 -- Set view in direction of world position vector v
 PA_funcs.set_playerview = function( v )
-	if not v then return false end
+	if !v then return false end
 	local ply = LocalPlayer()
 	local pos = ply:GetShootPos()
 	local Ang = (v - pos):Angle()
@@ -36,12 +37,12 @@ end
 
 -- Sends data to server to move entity - ent1/ent2 are the entities the points are attached to
 PA_funcs.move_entity = function( vec1, vec2, activeent )
-	if not IsValid(activeent) then
+	if !IsValid(activeent) then
 		Warning("No valid entity selected")
 		return false
 	end
 	
-	if not vec1 or not vec2 then
+	if !vec1 or !vec2 then
 		Warning("Incomplete move data")
 		return false
 	end
@@ -72,12 +73,12 @@ end
 
 -- Sends data to server to rotate entity - vector is pivot point
 PA_funcs.rotate_entity = function( ang, vec, relative, activeent )
-	if not IsValid(activeent) then
+	if !IsValid(activeent) then
 		Warning("No valid entity selected")
 		return false
 	end
 	
-	if not ang then
+	if !ang then
 		Warning("Incomplete rotation data")
 		return false
 	end
@@ -130,7 +131,7 @@ PA_funcs.rotate_entity = function( ang, vec, relative, activeent )
 end
 
 PA_funcs.construct_exists = function( construct_type, ID )
-	if not construct_type or not ID then return false end
+	if !construct_type or !ID then return false end
 
 	if construct_type == "Point" then
 		if precision_align_points[ID].origin then
@@ -157,14 +158,15 @@ end
 
 PA_funcs.point_global = function( point )
 	local point_temp = table.Copy( precision_align_points[point] )
-	if not point_temp.origin then
+	
+	if !point_temp.origin then
 		return false
 	end
 	
 	local ent = point_temp.entity
 	if ent then
 		if IsValid(ent) then
-			point_temp.origin = PA_funcs.ss_entity[ent]:SS_LocalToWorld( point_temp.origin )
+			point_temp.origin = ent:LocalToWorld( point_temp.origin )
 		else
 			PA_funcs.delete_point(point)
 			return false
@@ -177,14 +179,14 @@ end
 PA_funcs.point_local = function( point )
 	local point_temp = table.Copy( precision_align_points[point] )
 	
-	if not point_temp.origin then
+	if !point_temp.origin then
 		return false
 	end
 	
 	local ent = point_temp.entity
 	if ent then
 		if IsValid(ent) then
-			point_temp.origin = PA_funcs.ss_entity[ent]:WorldToLocal( point_temp.origin )
+			point_temp.origin = ent:WorldToLocal( point_temp.origin )
 		else
 			PA_funcs.delete_point(point)
 			return false
@@ -195,7 +197,7 @@ PA_funcs.point_local = function( point )
 end
 
 PA_funcs.set_point = function( point, origin )
-	if not origin then
+	if !origin then
 		Warning("Incomplete point data")
 		return false
 	end
@@ -227,16 +229,16 @@ PA_funcs.delete_points = function()
 end
 
 PA_funcs.attach_point = function( point, ent )
-	if not precision_align_points[point].origin then
+	if !precision_align_points[point].origin then
 		Warning("Point must be defined before attaching")
 		return false
 	end
 	
 	local attached_ent = precision_align_points[point].entity
 	
-	if not IsValid(ent) then
+	if !IsValid(ent) then
 		if attached_ent then
-			precision_align_points[point].origin = PA_funcs.ss_entity[attached_ent]:SS_LocalToWorld(precision_align_points[point].origin)
+			precision_align_points[point].origin = attached_ent:LocalToWorld(precision_align_points[point].origin)
 			precision_align_points[point].entity = nil
 			Message("Point " .. tostring(point) .. " detached")
 			return true
@@ -251,12 +253,12 @@ PA_funcs.attach_point = function( point, ent )
 			Message("Point is already attached to this entity")
 			return false
 		else
-			precision_align_points[point].origin = PA_funcs.ss_entity[attached_ent]:SS_LocalToWorld(precision_align_points[point].origin)
+			precision_align_points[point].origin = attached_ent:LocalToWorld(precision_align_points[point].origin)
 		end		
 	end
 	
 	precision_align_points[point].entity = ent
-	precision_align_points[point].origin = PA_funcs.ss_entity[ent]:WorldToLocal(precision_align_points[point].origin)
+	precision_align_points[point].origin = ent:WorldToLocal(precision_align_points[point].origin)
 	Message("Point " .. tostring(point) .. " attached to " .. tostring(ent))
 	return true
 end
@@ -290,15 +292,15 @@ end
 PA_funcs.line_global = function( line )
 	local line_temp = table.Copy( precision_align_lines[line] )
 	
-	if not line_temp.startpoint or not line_temp.endpoint then
+	if !line_temp.startpoint or !line_temp.endpoint then
 		return false
 	end
 	
 	local ent = line_temp.entity
 	if ent then
 		if IsValid(ent) then
-			line_temp.startpoint = PA_funcs.ss_entity[ent]:SS_LocalToWorld( line_temp.startpoint )
-			line_temp.endpoint = PA_funcs.ss_entity[ent]:SS_LocalToWorld( line_temp.endpoint )
+			line_temp.startpoint = ent:LocalToWorld( line_temp.startpoint )
+			line_temp.endpoint = ent:LocalToWorld( line_temp.endpoint )
 		else
 			PA_funcs.delete_line(line)
 			return false
@@ -311,15 +313,15 @@ end
 PA_funcs.line_local = function( line )
 	local line_temp = table.Copy( precision_align_lines[line] )
 	
-	if not line_temp.startpoint or not line_temp.endpoint then
+	if !line_temp.startpoint or !line_temp.endpoint then
 		return false
 	end
 	
 	local ent = line_temp.entity
 	if ent then
 		if IsValid(ent) then
-			line_temp.startpoint = PA_funcs.ss_entity[ent]:WorldToLocal( line_temp.startpoint )
-			line_temp.endpoint = PA_funcs.ss_entity[ent]:WorldToLocal( line_temp.endpoint )
+			line_temp.startpoint = ent:WorldToLocal( line_temp.startpoint )
+			line_temp.endpoint = ent:WorldToLocal( line_temp.endpoint )
 		else
 			PA_funcs.delete_line(line)
 			return false
@@ -331,19 +333,19 @@ end
 
 PA_funcs.set_line = function( line, startpoint, endpoint, direction, length )
 	local ent = precision_align_lines[line].entity
-	if not IsValid(ent) then
+	if !IsValid(ent) then
 		ent = nil
 	end
 	
 	local startpoint_old = precision_align_lines[line].startpoint
 	if startpoint then
 		if ent then
-			precision_align_lines[line].startpoint = PA_funcs.ss_entity[ent]:WorldToLocal(startpoint)
+			precision_align_lines[line].startpoint = ent:WorldToLocal(startpoint)
 		else
 			precision_align_lines[line].startpoint = startpoint
 		end
 		
-		if not endpoint and not direction then
+		if !endpoint and !direction then
 			Message("Line [" .. tostring(line) .. "] startpoint set at " .. tostring(startpoint))
 			return true
 		end
@@ -351,7 +353,7 @@ PA_funcs.set_line = function( line, startpoint, endpoint, direction, length )
 	
 	if endpoint then
 		if ent then
-			precision_align_lines[line].endpoint = PA_funcs.ss_entity[ent]:WorldToLocal(endpoint)
+			precision_align_lines[line].endpoint = ent:WorldToLocal(endpoint)
 		else
 			precision_align_lines[line].endpoint = endpoint
 		end
@@ -364,14 +366,14 @@ PA_funcs.set_line = function( line, startpoint, endpoint, direction, length )
 		return true
 	end
 	
-	if not precision_align_lines[line].startpoint then
+	if !precision_align_lines[line].startpoint then
 		Warning("Line not defined")
 		return false
 	end
 	
 	if direction then
 		local len
-		if not length then
+		if !length then
 			--Check to see whether line already exists, if so use that length
 			if PA_funcs.construct_exists( "Line", line ) then
 				len = startpoint_old:Distance( precision_align_lines[line].endpoint )
@@ -383,7 +385,7 @@ PA_funcs.set_line = function( line, startpoint, endpoint, direction, length )
 		end
 		
 		if ent then
-			direction = ( PA_funcs.ss_entity[ent]:WorldToLocal(PA_funcs.ss_entity[ent]:SS_GetPos() + direction) ):GetNormal()
+			direction = ( ent:WorldToLocal(ent:GetPos() + direction) ):GetNormal()
 		end
 		
 		precision_align_lines[line].endpoint = precision_align_lines[line].startpoint + direction * len
@@ -417,17 +419,17 @@ PA_funcs.delete_lines = function()
 end
 
 PA_funcs.attach_line = function( line, ent )
-	if not precision_align_lines[line].startpoint or not precision_align_lines[line].endpoint then
+	if !precision_align_lines[line].startpoint or !precision_align_lines[line].endpoint then
 		Warning("Line must be defined before attaching")
 		return false
 	end
 	
 	local attached_ent = precision_align_lines[line].entity
 	
-	if not IsValid(ent) then
+	if !IsValid(ent) then
 		if attached_ent then
-			precision_align_lines[line].startpoint = PA_funcs.ss_entity[attached_ent]:SS_LocalToWorld(precision_align_lines[line].startpoint)
-			precision_align_lines[line].endpoint = PA_funcs.ss_entity[attached_ent]:SS_LocalToWorld(precision_align_lines[line].endpoint)
+			precision_align_lines[line].startpoint = attached_ent:LocalToWorld(precision_align_lines[line].startpoint)
+			precision_align_lines[line].endpoint = attached_ent:LocalToWorld(precision_align_lines[line].endpoint)
 			precision_align_lines[line].entity = nil
 			Message("Line " .. tostring(line) .. " detached")
 			return true
@@ -442,14 +444,14 @@ PA_funcs.attach_line = function( line, ent )
 			Message("Line is already attached to this entity")
 			return false
 		else
-			precision_align_lines[line].startpoint = PA_funcs.ss_entity[attached_ent]:SS_LocalToWorld(precision_align_lines[line].startpoint)
-			precision_align_lines[line].endpoint = PA_funcs.ss_entity[attached_ent]:SS_LocalToWorld(precision_align_lines[line].endpoint)
+			precision_align_lines[line].startpoint = attached_ent:LocalToWorld(precision_align_lines[line].startpoint)
+			precision_align_lines[line].endpoint = attached_ent:LocalToWorld(precision_align_lines[line].endpoint)
 		end		
 	end
 	
 	precision_align_lines[line].entity = ent
-	precision_align_lines[line].startpoint = PA_funcs.ss_entity[ent]:WorldToLocal(precision_align_lines[line].startpoint)
-	precision_align_lines[line].endpoint = PA_funcs.ss_entity[ent]:WorldToLocal(precision_align_lines[line].endpoint)
+	precision_align_lines[line].startpoint = ent:WorldToLocal(precision_align_lines[line].startpoint)
+	precision_align_lines[line].endpoint = ent:WorldToLocal(precision_align_lines[line].endpoint)
 	Message("Line " .. tostring(line) .. " attached to " .. tostring(ent))
 	return true
 end
@@ -481,15 +483,15 @@ end
 PA_funcs.plane_global = function( plane )
 	local plane_temp = table.Copy(precision_align_planes[plane])
 	
-	if not plane_temp.origin or not plane_temp.normal then
+	if !plane_temp.origin or !plane_temp.normal then
 		return false
 	end
 	
 	local ent = plane_temp.entity
 	if ent then
 		if IsValid(ent) then
-			plane_temp.origin = PA_funcs.ss_entity[ent]:SS_LocalToWorld(plane_temp.origin)
-			plane_temp.normal = ( PA_funcs.ss_entity[ent]:SS_LocalToWorld(plane_temp.normal) - PA_funcs.ss_entity[ent]:SS_GetPos()):GetNormal()
+			plane_temp.origin = ent:LocalToWorld(plane_temp.origin)
+			plane_temp.normal = ( ent:LocalToWorld(plane_temp.normal) - ent:GetPos()):GetNormal()
 		else
 			PA_funcs.delete_plane(plane)
 			return false
@@ -502,15 +504,15 @@ end
 PA_funcs.plane_local = function( plane )
 	local plane_temp = table.Copy(precision_align_planes[plane])
 	
-	if not plane_temp.origin or not plane_temp.normal then
+	if !plane_temp.origin or !plane_temp.normal then
 		return false
 	end
 	
 	local ent = plane_temp.entity
 	if ent then
 		if IsValid(ent) then
-			plane_temp.origin = PA_funcs.ss_entity[ent]:WorldToLocal(plane_temp.origin)
-			plane_temp.normal = ( PA_funcs.ss_entity[ent]:WorldToLocal(PA_funcs.ss_entity[ent]:SS_GetPos() + plane_temp.normal) ):GetNormal()
+			plane_temp.origin = ent:WorldToLocal(plane_temp.origin)
+			plane_temp.normal = ( ent:WorldToLocal(ent:GetPos() + plane_temp.normal) ):GetNormal()
 		else
 			PA_funcs.delete_plane(plane)
 			return false
@@ -525,20 +527,20 @@ PA_funcs.set_plane = function( plane, origin, normal )
 	
 	if origin then
 		if ent then
-			precision_align_planes[plane].origin = PA_funcs.ss_entity[ent]:WorldToLocal(origin)
+			precision_align_planes[plane].origin = ent:WorldToLocal(origin)
 		else
 			precision_align_planes[plane].origin = origin
 		end
 	end
 	
-	if not precision_align_planes[plane].origin then
+	if !precision_align_planes[plane].origin then
 		Warning("Plane not defined")
 		return false
 	end
 	
 	if normal then
 		if ent then
-			precision_align_planes[plane].normal = ( PA_funcs.ss_entity[ent]:WorldToLocal(PA_funcs.ss_entity[ent]:SS_GetPos() + normal) ):GetNormal()
+			precision_align_planes[plane].normal = ( ent:WorldToLocal(ent:GetPos() + normal) ):GetNormal()
 		else
 			precision_align_planes[plane].normal = normal
 		end
@@ -570,17 +572,17 @@ PA_funcs.delete_planes = function()
 end
 
 PA_funcs.attach_plane = function( plane, ent )
-	if not precision_align_planes[plane].origin or not precision_align_planes[plane].normal then
+	if !precision_align_planes[plane].origin or !precision_align_planes[plane].normal then
 		Warning("Plane must be defined before attaching")
 		return false
 	end
 	
 	local attached_ent = precision_align_planes[plane].entity
 	
-	if not IsValid(ent) then
+	if !IsValid(ent) then
 		if attached_ent then
-			precision_align_planes[plane].origin = PA_funcs.ss_entity[attached_ent]:SS_LocalToWorld(precision_align_planes[plane].origin)
-			precision_align_planes[plane].normal = ( PA_funcs.ss_entity[attached_ent]:SS_LocalToWorld(precision_align_planes[plane].normal) - PA_funcs.ss_entity[attached_ent]:SS_GetPos() ):GetNormal()
+			precision_align_planes[plane].origin = attached_ent:LocalToWorld(precision_align_planes[plane].origin)
+			precision_align_planes[plane].normal = ( attached_ent:LocalToWorld(precision_align_planes[plane].normal) - attached_ent:GetPos() ):GetNormal()
 			precision_align_planes[plane].entity = nil
 			Message("Plane " .. tostring(plane) .. " detached")
 			return true
@@ -595,14 +597,14 @@ PA_funcs.attach_plane = function( plane, ent )
 			Message("Plane is already attached to this entity")
 			return false
 		else
-			precision_align_planes[plane].origin = PA_funcs.ss_entity[attached_ent]:SS_LocalToWorld(precision_align_planes[plane].origin)
-			precision_align_planes[plane].normal = ( PA_funcs.ss_entity[attached_ent]:SS_LocalToWorld(precision_align_planes[plane].normal) - PA_funcs.ss_entity[attached_ent]:SS_GetPos() ):GetNormal()
+			precision_align_planes[plane].origin = attached_ent:LocalToWorld(precision_align_planes[plane].origin)
+			precision_align_planes[plane].normal = ( attached_ent:LocalToWorld(precision_align_planes[plane].normal) - attached_ent:GetPos() ):GetNormal()
 		end
 	end
 	
 	precision_align_planes[plane].entity = ent
-	precision_align_planes[plane].origin = PA_funcs.ss_entity[ent]:WorldToLocal(precision_align_planes[plane].origin)
-	precision_align_planes[plane].normal = ( PA_funcs.ss_entity[ent]:WorldToLocal(PA_funcs.ss_entity[ent]:SS_GetPos() + precision_align_planes[plane].normal) ):GetNormal()
+	precision_align_planes[plane].origin = ent:WorldToLocal(precision_align_planes[plane].origin)
+	precision_align_planes[plane].normal = ( ent:WorldToLocal(ent:GetPos() + precision_align_planes[plane].normal) ):GetNormal()
 	Message("Plane " .. tostring(plane) .. " attached to " .. tostring(ent))
 	return true
 end
@@ -665,7 +667,7 @@ local function solve_point_2line_intersection( line1, line2 )
 	
 	-- solve simultaneous
 	local length1, length2 = solve_simultaneous_2( a1, b1, c1, a2, b2, c2 )
-	if not length1 or not length2 then return false end
+	if !length1 or !length2 then return false end
 	
 	local dir1, dir2 = A:GetNormal(), B:GetNormal()
 	
@@ -743,7 +745,7 @@ PA_funcs.point_3plane_intersection = function( planeID1, planeID2, planeID3 )
 	end
 	
 	local line = PA_funcs.line_2plane_intersection( planeID1, planeID2 )
-	if not line then return false end
+	if !line then return false end
 	
 	-- Calculate line/plane intercept
 	local length = plane3.normal:Dot(plane3.origin - line.startpoint) / plane3.normal:Dot(line.direction)
@@ -883,7 +885,7 @@ PA_funcs.rotate_2lines_parallel = function( pivot, lineID1, lineID2, activeent )
 	local line1 = PA_funcs.line_global( lineID1 )
 	local line2 = PA_funcs.line_global( lineID2 )
 	
-	if not pivot then
+	if !pivot then
 		pivot = line1.startpoint
 	end
 	
@@ -891,7 +893,7 @@ PA_funcs.rotate_2lines_parallel = function( pivot, lineID1, lineID2, activeent )
 	local dir2 = ( line2.endpoint - line2.startpoint ):GetNormal()
 	
 	local vec = dir1:Cross(dir2):GetNormal()
-	local ang = PA_funcs.ss_entity[activeent]:GetAngles()
+	local ang = activeent:GetAngles()
 	
 	if dir1 == Vector(-dir2.x, -dir2.y, -dir2.z) then
 		ang = Angle(-ang.p, ang.y + 180, -ang.r)
@@ -908,7 +910,7 @@ PA_funcs.rotate_2planes_parallel = function( pivot, planeID1, planeID2, activeen
 	local plane1 = PA_funcs.plane_global( planeID1 )
 	local plane2 = PA_funcs.plane_global( planeID2 )
 	
-	if not pivot then
+	if !pivot then
 		pivot = plane1.origin
 	end
 	
@@ -916,7 +918,7 @@ PA_funcs.rotate_2planes_parallel = function( pivot, planeID1, planeID2, activeen
 	local dir2 = plane2.normal
 	
 	local vec = dir1:Cross(dir2):GetNormal()
-	local ang = PA_funcs.ss_entity[activeent]:GetAngles()
+	local ang = activeent:GetAngles()
 	
 	if dir1 == Vector(-dir2.x, -dir2.y, -dir2.z) then
 		ang = Angle(-ang.p, ang.y + 180, -ang.r)
@@ -1041,11 +1043,11 @@ PA_funcs.rotate_line_plane_parallel = function( pivot, axis, lineID, planeID, ac
 		Ang = solver(x2, y2) 
 	end
 	
-	local ang = PA_funcs.ss_entity[activeent]:GetAngles()
+	local ang = activeent:GetAngles()
 	ang:RotateAroundAxis( axisdir, Ang )
 	
 	-- Use axis as pivot by default
-	if not pivot and axis then
+	if !pivot and axis then
 		pivot = axis.startpoint
 	end
 	

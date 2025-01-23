@@ -44,7 +44,7 @@ local ColourLookup = {
 
 
 local function construct_exists( construct_type, ID )
-	if not construct_type or not ID then return false end
+	if !construct_type or !ID then return false end
 
 	if construct_type == "Point" then
 		if precision_align_points[ID].origin then
@@ -77,7 +77,7 @@ local function GetConstructNum()
 end
 
 
--- Taken from Garry's tool code
+-- Taken from Garrys tool code
 local function DrawScrollingText( text, y, texwide )
 	local w, h = surface.GetTextSize( text  )
 	w = w + 64
@@ -194,7 +194,7 @@ function PA_DrawToolScreen( w, h )
 		
 	end )
 	
-	if not r then
+	if !r then
 		ErrorNoHalt( e, "\n" )
 	end
 end

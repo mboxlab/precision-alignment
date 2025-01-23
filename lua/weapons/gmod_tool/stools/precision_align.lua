@@ -15,68 +15,10 @@ AddCSLuaFile( PA.."/tool_screen.lua" )
 
 include( "weapons/gmod_tool/stools/"..PA.."/tool_screen.lua" )
 
-local EntityMT = FindMetaTable("Entity")
-
-function EntityMT:SS_GetPos()
-	if InfMap then 
-		return self:InfMap_GetPos()
-	else
-		return self:GetPos()
-	end
-end
-function EntityMT:SS_LocalToWorld(ent)
-	if InfMap then 
-		return self:InfMap_LocalToWorld(ent)
-	else
-		return self:LocalToWorld(ent)
-	end
-end
-function EntityMT:SS_LocalToWorldAngles(ent)
-	if InfMap then 
-		return self:InfMap_LocalToWorldAngles(ent)
-	else
-		return self:LocalToWorldAngles(ent)
-	end
-end
-
-if SERVER then 
-	util.AddNetworkString( "PA_serverside_correction" ) 
-	util.AddNetworkString( "PA_serverside_listview" )
-
-	net.Receive("PA_serverside_listview", function()
-		local vec = Vector(0,0,0)
-		local listview = net.ReadInt(8) 
-		local ent = net.ReadEntity()
-		local ply = net.ReadEntity()
-
-		vec[1] = net.ReadFloat()
-		vec[2] = net.ReadFloat()
-		vec[3] = net.ReadFloat()
-
-		local WTL = ent:SS_WorldToLocal(vec)
-
-		net.Start("PA_serverside_listview")
-		net.WriteInt(listview,8)
-		net.WriteEntity(ent)
-		net.WriteFloat(WTL[1])
-		net.WriteFloat(WTL[2])
-		net.WriteFloat(WTL[3])
-		net.Send(ply)
-
-	end)
-
-	function EntityMT:SS_WorldToLocal(ent)
-		if InfMap then 
-			return self:InfMap_WorldToLocal(ent)
-		else
-			return self:WorldToLocal(ent)
-		end
-	end
-end
-
 TOOL.ClientConVar =
 {
-	-- Tool menu options 
+	-- Tool menu options
+	["displayhud"]			= "1",
 	["edge_snap"] 			= "1",
 	["centre_snap"] 		= "1",
 	["snap_distance"] 		= "100",
@@ -184,66 +126,87 @@ end
 
 if SERVER then
 
-	local track_ents = setmetatable({}, {__mode = "k"})
-
-	hook.Add( "Think", "PA_SS_TRACK_ENTS", function()
-		for a, b in pairs( track_ents ) do
-
-			if not IsValid(a) then
-				track_ents[a] = nil
-				goto C
+	function PAServerSideMath(ent, ply)
+		net.Receive("PA_Relative_Net", function(len, ply)
+			local X = net.ReadDouble()
+			local Y = net.ReadDouble()
+			local Z = net.ReadDouble()
+			local mathType = net.ReadDouble()
+			if mathType == 1 then 
+			--WorldToLocal--
+				local relativeVectorServer = ent:WorldToLocal(Vector(X,Y,Z))
+					net.Start("PA_Relative_Net")
+						net.WriteDouble(relativeVectorServer.x)
+						net.WriteDouble(relativeVectorServer.y)
+						net.WriteDouble(relativeVectorServer.z)
+					net.Send(ply)
+				end
+			if mathType == 2 then 
+			--LocalToWorld--
+				local relativeVectorServer = ent:LocalToWorld(Vector(X,Y,Z))
+					net.Start("PA_Relative_Net")
+						net.WriteDouble(relativeVectorServer.x)
+						net.WriteDouble(relativeVectorServer.y)
+						net.WriteDouble(relativeVectorServer.z)
+					net.Send(ply)
+				end
+			if mathType == 3 then 
+			--WorldToLocalAngles--
+				local relativeAngleServer = ent:WorldToLocalAngles(Angle(X, Y, Z))
+						net.Start("PA_Relative_Net")
+							net.WriteDouble(relativeAngleServer.x)
+							net.WriteDouble(relativeAngleServer.y)
+							net.WriteDouble(relativeAngleServer.z)
+						net.Send(ply)
+				end
+			if mathType == 4 then 
+			--LocalToWorldAngles--
 			end
+		end)
+	end
 
-			if b.storedPos ~= a:SS_GetPos() or b.storedAng ~= a:GetAngles() then
-				net.Start( "PA_serverside_correction" )
-				net.WriteFloat(a:SS_GetPos()[1])
-				net.WriteFloat(a:SS_GetPos()[2])
-				net.WriteFloat(a:SS_GetPos()[3])
-				net.WriteFloat(a:GetAngles()[1])
-				net.WriteFloat(a:GetAngles()[2])
-				net.WriteFloat(a:GetAngles()[3])
-				net.WriteEntity(a)
-				net.Send( b.plys )
-				b.storedPos = a:SS_GetPos()
-				b.storedAng = a:GetAngles()
-			end
-			::C::
-		end
-	end )
+
+--[[
+function PAWorldToLocal(ent, ply)
+		net.Receive("PA_Relative_NetToServerWorldToLocal", function(len, ply) 
+			local X = net.ReadDouble()
+			local Y = net.ReadDouble()
+			local Z = net.ReadDouble()
+			local relativeVectorServer = ent:WorldToLocal(Vector(X,Y,Z))
+			net.Start("PA_Relative_NetToClientWorldToLocal")
+				net.WriteDouble(relativeVectorServer.x)
+				net.WriteDouble(relativeVectorServer.y)
+				net.WriteDouble(relativeVectorServer.z)
+		net.Send(ply)
+		end)
+	end
+
+function PALocalToWorld(ent, ply)
+		net.Receive("PA_Relative_NetToServerLocalToWorld", function(len, ply) 
+			local X = net.ReadDouble()
+			local Y = net.ReadDouble()
+			local Z = net.ReadDouble()
+			local relativeVectorServer = ent:LocalToWorld(Vector(X,Y,Z))
+			net.Start("PA_Relative_NetToClientLocalToWorld")
+				net.WriteDouble(relativeVectorServer.x)
+				net.WriteDouble(relativeVectorServer.y)
+				net.WriteDouble(relativeVectorServer.z)
+		net.Send(ply)
+		end)
+end
+]]
 
 	function TOOL:SendClickData( point, normal, ent )
-
-
-		if IsValid(ent) then
-			net.Start( "PA_serverside_correction" )
-			net.WriteFloat(ent:SS_GetPos()[1])
-			net.WriteFloat(ent:SS_GetPos()[2])
-			net.WriteFloat(ent:SS_GetPos()[3])
-
-			net.WriteFloat(ent:GetAngles()[1])
-			net.WriteFloat(ent:GetAngles()[2])
-			net.WriteFloat(ent:GetAngles()[3])
-			net.WriteEntity(ent)
-			net.Send( self:GetOwner() )
-
-			track_ents[ent] = track_ents[ent] or {
-				plys = RecipientFilter()
-			}
-			track_ents[ent].storedPos = ent:SS_GetPos()
-			track_ents[ent].storedAng = ent:GetAngles()
-			track_ents[ent].plys:AddPlayer(self:GetOwner())
-		end
-
 		net.Start( PA_ .. "click" )
 		
-		-- Send vectors using floats - was losing precision using just vectors
-		net.WriteFloat( point.x )
-		net.WriteFloat( point.y )
-		net.WriteFloat( point.z )
+		-- Send vectors using doubles - was losing precision using just vectors floats sucked
+		net.WriteDouble( point.x )
+		net.WriteDouble( point.y )
+		net.WriteDouble( point.z )
 		
-		net.WriteFloat( normal.x )
-		net.WriteFloat( normal.y )
-		net.WriteFloat( normal.z )
+		net.WriteDouble( normal.x )
+		net.WriteDouble( normal.y )
+		net.WriteDouble( normal.z )
 		
 		net.WriteEntity( ent )
 		
@@ -259,25 +222,7 @@ if SERVER then
 	function TOOL:SetActive( ent )
 		local ply = self:GetOwner()
 		local activeent = ply.PA_activeent
-		if IsValid(ent) then
-			net.Start( "PA_serverside_correction" )
-			net.WriteFloat(ent:SS_GetPos()[1])
-			net.WriteFloat(ent:SS_GetPos()[2])
-			net.WriteFloat(ent:SS_GetPos()[3])
-
-			net.WriteFloat(ent:GetAngles()[1])
-			net.WriteFloat(ent:GetAngles()[2])
-			net.WriteFloat(ent:GetAngles()[3])
-			net.WriteEntity(ent)
-			--net.WriteEntity(activeent)
-			net.Send( self:GetOwner() )
-			track_ents[ent] = track_ents[ent] or {
-				plys = RecipientFilter()
-			}
-			track_ents[ent].storedPos = ent:SS_GetPos()
-			track_ents[ent].storedAng = ent:GetAngles()
-			track_ents[ent].plys:AddPlayer(self:GetOwner())
-		end
+		
 		local function Deselect( ent )
 			if IsValid( ent ) and ent.PA then
 				local colour = ent.PA.TrueColour
@@ -321,6 +266,10 @@ if SERVER then
 			if A < 255 then ent:SetRenderMode( RENDERMODE_TRANSALPHA ) end
 			duplicator.StoreEntityModifier( ent, "colour", { Color = TrueColour } )
 			
+			PAServerSideMath(ent, ply)
+			--PAServerMath(ent, ply)
+			--PAWorldToLocal(ent, ply)
+			--PALocalToWorld(ent, ply)
 			self:SendEntityData( ent )
 			return true
 		else
@@ -387,19 +336,21 @@ function TOOL:GetClickPosition( trace )
 	local tooltype = self:GetClientNumber( "tooltype" )
 	
 	if ( not Phys or not Ent or Ent:IsWorld() ) then
-		if InfMap then local chunk_pos, chunk_offset = InfMap.localize_vector(trace.HitPos) Pos = chunk_pos else Pos = trace.HitPos end
+		Pos = trace.HitPos
 	
 	-- Coordinate Centre
 	elseif tooltype == 2 then
-		Pos = Ent:SS_GetPos()
+		Pos = Ent:GetPos()
 		
 	-- Mass Centre
 	elseif tooltype == 3 then
-		Pos = Ent:SS_LocalToWorld(Phys:GetMassCenter())
+		Pos = Ent:LocalToWorld(Phys:GetMassCenter())
+		
+		
 		
 	-- BB Centre
 	elseif tooltype == 4 then
-		Pos = Ent:SS_LocalToWorld(Ent:OBBCenter())
+		Pos = Ent:LocalToWorld(Ent:OBBCenter())
 	
 	elseif Edge_Snap or Centre_Snap then
 		local HitPosL = Ent:WorldToLocal( trace.HitPos )
@@ -464,9 +415,9 @@ function TOOL:GetClickPosition( trace )
 			end
 		end
 		
-		Pos = Ent:SS_LocalToWorld(NewPosL)
+		Pos = Ent:LocalToWorld(NewPosL)
 	else
-		if InfMap then local chunk_pos, chunk_offset = InfMap.localize_vector(trace.HitPos) Pos = chunk_pos else Pos = trace.HitPos end
+		Pos = trace.HitPos
 	end
 	
 	return Pos

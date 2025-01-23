@@ -54,10 +54,10 @@ end
 --********************************************************************************************************************--
 
 
----------------------------------------------------------
---   Name: Stack_Num_Request
---   Popup window to request stack_num
----------------------------------------------------------
+/*---------------------------------------------------------
+   Name: Stack_Num_Request
+   Popup window to request stack_num
+---------------------------------------------------------*/
 
 local STACK_POPUP = {}
 
@@ -144,10 +144,10 @@ end
 vgui.Register("PA_Stack_Popup", STACK_POPUP, "DFrame")
 
 
------------------------------------------------------------
---   Name: PA_Construct_ListView
---   Standard construct list
----------------------------------------------------------
+/*---------------------------------------------------------
+   Name: PA_Construct_ListView
+   Standard construct list
+---------------------------------------------------------*/
 
 local CONSTRUCT_LISTVIEW = {}
 function CONSTRUCT_LISTVIEW:Init()
@@ -208,10 +208,10 @@ end
 
 vgui.Register("PA_Indicator", INDICATOR, "DPanel")
 
------------------------------------------------------------
---   Name: PA_XYZ_Sliders
---   XYZ slider control for vector input/output
----------------------------------------------------------
+/*---------------------------------------------------------
+   Name: PA_XYZ_Sliders
+   XYZ slider control for vector input/output
+---------------------------------------------------------*/
 
 local XYZ_SLIDER = {}
 function XYZ_SLIDER:Init()
@@ -315,10 +315,10 @@ vgui.Register("PA_XYZ_Sliders", XYZ_SLIDERS, "DPanel")
 
 
 
------------------------------------------------------------
---   Name: PA_Function_Button
---   Standard button that can be assigned a function
----------------------------------------------------------
+/*---------------------------------------------------------
+   Name: PA_Function_Button
+   Standard button that can be assigned a function
+---------------------------------------------------------*/
 
 local FUNCTION_BUTTON = {}
 function FUNCTION_BUTTON:Init()
@@ -337,17 +337,16 @@ function FUNCTION_BUTTON:SetFunction( func )
 end
 vgui.Register("PA_Function_Button", FUNCTION_BUTTON, "DButton")
 
------------------------------------------------------------
---   Name: PA_Function_Button_2
---   Construct functions selection button
----------------------------------------------------------
+/*---------------------------------------------------------
+   Name: PA_Function_Button_2
+   Construct functions selection button
+---------------------------------------------------------*/
 
 local function_buttons_2_list = {}
 local FUNCTION_BUTTON_2 = {}
 
 function FUNCTION_BUTTON_2:Init()
 	self:SetSize(130, 25)
-	self:SetTextColor(color_white)
 	table.insert(function_buttons_2_list, self)
 	
 	self.DoClick = function()
@@ -408,7 +407,7 @@ end
 
 -- Override mouse functions (make it into a toggle button)
 function FUNCTION_BUTTON_2:OnMousePressed( mousecode )
-	if not self.Depressed then
+	if !self.Depressed then
 		-- pop up any previously depressed buttons
 		for k, v in pairs (function_buttons_2_list) do
 			if v.Depressed then
@@ -425,10 +424,10 @@ end
 
 vgui.Register("PA_Function_Button_2", FUNCTION_BUTTON_2, "DButton")
 
------------------------------------------------------------
---   Name: PA_Function_Button_3
---   Move Constructs selection button
------------------------------------------------------------
+/*---------------------------------------------------------
+   Name: PA_Function_Button_3
+   Move Constructs selection button
+---------------------------------------------------------*/
 
 local function_buttons_3_list = {}
 local FUNCTION_BUTTON_3 = {}
@@ -470,7 +469,7 @@ end
 
 -- Override mouse functions (make it into a toggle button)
 function FUNCTION_BUTTON_3:OnMousePressed( mousecode )
-	if not self.Depressed then
+	if !self.Depressed then
 		-- pop up any previously depressed buttons
 		for k, v in pairs (function_buttons_3_list) do
 			if v.Depressed then
@@ -487,10 +486,10 @@ end
 
 vgui.Register("PA_Function_Button_3", FUNCTION_BUTTON_3, "DButton")
 
------------------------------------------------------------
---   Name: PA_Function_Button_Rotation
---   Rotation Functions selection button
------------------------------------------------------------
+/*---------------------------------------------------------
+   Name: PA_Function_Button_Rotation
+   Rotation Functions selection button
+---------------------------------------------------------*/
 
 local rotation_function_buttons_list = {}
 local FUNCTION_BUTTON_ROTATION = {}
@@ -555,7 +554,7 @@ end
 
 -- Override mouse functions (make it into a toggle button)
 function FUNCTION_BUTTON_ROTATION:OnMousePressed( mousecode )
-	if not self.Depressed then
+	if !self.Depressed then
 		-- pop up any previously depressed buttons
 		for k, v in pairs (rotation_function_buttons_list) do
 			if v.Depressed then
@@ -572,9 +571,9 @@ end
 
 vgui.Register("PA_Function_Button_Rotation", FUNCTION_BUTTON_ROTATION, "DButton")
 
------------------------------------------------------------
---   Name: Standard manipulation window buttons
------------------------------------------------------------
+/*---------------------------------------------------------
+   Name: Standard manipulation window buttons
+---------------------------------------------------------*/
 
 local ZERO_BUTTON = {}
 function ZERO_BUTTON:Init()
@@ -717,17 +716,17 @@ end
 function MOVE_BUTTON:Think()
 	if IsValid(PA_activeent) and self:GetDisabled() then
 		self:SetDisabled(false)
-	elseif not IsValid(PA_activeent) and not self:GetDisabled() then
+	elseif !IsValid(PA_activeent) and !self:GetDisabled() then
 		self:SetDisabled(true)
 	end
 end
 
 vgui.Register("PA_Move_Button", MOVE_BUTTON, "DButton")
 
------------------------------------------------------------
---   Name: PA_Colour_Panel
---   Common background panel for listviews
------------------------------------------------------------
+/*---------------------------------------------------------
+   Name: PA_Colour_Panel
+   Common background panel for listviews
+---------------------------------------------------------*/
 
 local COLOUR_PANEL = {}
 function COLOUR_PANEL:Init()
@@ -752,10 +751,10 @@ end
 
 vgui.Register("PA_Colour_Panel", COLOUR_PANEL, "DPanel")
 
------------------------------------------------------------
---   Name: Constraints Panels
---   Standard panels for constraints tab
------------------------------------------------------------
+/*---------------------------------------------------------
+   Name: Constraints Panels
+   Standard panels for constraints tab
+---------------------------------------------------------*/
 
 local CONSTRAINT_TITLE_TEXT = {}
 function CONSTRAINT_TITLE_TEXT:Init()
@@ -810,10 +809,10 @@ end
 -- Base this off PA_XYZ_Slider so the keyboard hook functions apply
 vgui.Register("PA_Constraint_Slider", CONSTRAINT_SLIDER, "PA_XYZ_Slider")
 
------------------------------------------------------------
---   Name: PA_ColourCircle
---   HSV Colour selection wheel for displays tab
------------------------------------------------------------
+/*---------------------------------------------------------
+   Name: PA_ColourCircle
+   HSV Colour selection wheel for displays tab
+---------------------------------------------------------*/
 
 local COLOUR_CIRCLE = {}
 function COLOUR_CIRCLE:Init()
@@ -867,10 +866,10 @@ end
 
 vgui.Register("PA_ColourCircle", COLOUR_CIRCLE, "DColorCube")
 
------------------------------------------------------------
---  Name: PA_ColourControl
---   Full HSV Colour selection display for displays tab
------------------------------------------------------------
+/*---------------------------------------------------------
+   Name: PA_ColourControl
+   Full HSV Colour selection display for displays tab
+---------------------------------------------------------*/
 
 local HSV_COLOUR_CONTROL = {}
 function HSV_COLOUR_CONTROL:Init()
@@ -882,12 +881,84 @@ function HSV_COLOUR_CONTROL:Init()
 		self.ColorMixer.ValueChanged = function( panel, color )
 			local H, S, V = ColorToHSV( color )
 			local A = color.a or 255
+			-- PrintTable( color ) -- print( tostring( color ) )
+			-- PrintTable( self.ColorMixer:GetColor() )
+			-- print( "changed: " .. H .. ", " .. S .. ", " .. V .. ", " .. A )
 			RunConsoleCommand( self.convar .. "_h", H )
 			RunConsoleCommand( self.convar .. "_s", S )
 			RunConsoleCommand( self.convar .. "_v", V )
 			RunConsoleCommand( self.convar .. "_a", A )
 		end
 		
+	/*
+	self.ColourCircle = vgui.Create("PA_ColourCircle", self)
+		self.ColourCircle:SetPos(0, 35)
+		self.ColourCircle:SetSize(150, 150)
+		self.ColourCircle.OnChange = function( panel, H, S )
+			local colour_brightness = HSVToColor( H, S, 1 )
+			self.Bar_Brightness:SetFGColor( colour_brightness )
+			
+			local V = self.Bar_Brightness:GetColor()
+			local colour_alpha = HSVToColor( H, S, V )
+			self.Bar_Alpha:SetFGColor( colour_alpha )
+			
+			RunConsoleCommand( self.convar .. "_h", H )
+			RunConsoleCommand( self.convar .. "_s", S )
+		end 
+	
+	
+	self.Bar_Brightness = vgui.Create( "DAlphaBar", self )
+		-- self.Bar_Brightness:SetBGColor( "vgui/hsv-brightness" )
+		self.Bar_Brightness:SetPaintBackground( "vgui/hsv-brightness" )
+		self.Bar_Brightness:SetPos(160, 45)
+		self.Bar_Brightness:SetSize(25, 130)
+		self.Bar_Brightness.GetColor = function()
+			return 1 - self.Bar_Brightness:GetValue()
+		end
+		
+		self.Bar_Brightness.SetColor = function( panel, V )
+			self.Bar_Brightness:SetValue( 1 - V )
+			self.Bar_Brightness:OnChange( V * 255 )
+		end
+		
+		self.Bar_Brightness.OnChange = function( panel, brightness )
+			local V = brightness / 255
+			local H, S = self.ColourCircle:GetColor()
+			local colour_alpha = HSVToColor( H, S, V )
+			self.Bar_Alpha:SetFGColor( colour_alpha )
+			
+			RunConsoleCommand( self.convar .. "_v", V )
+		end 
+		
+		-- Remove default alpha bar background image
+--[[ 		self.Bar_Brightness.PerformLayout = function()
+			DSlider.PerformLayout( self.Bar_Brightness )
+		end
+		self.Bar_Brightness.imgBackground:Remove() ]]
+	
+	AddMenuText( "HSV", 130, 182, self )
+	
+
+	self.Bar_Alpha = vgui.Create( "DAlphaBar", self )
+		self.Bar_Alpha:SetPos(210, 45)
+		self.Bar_Alpha:SetSize(25, 130)
+		self.Bar_Alpha.GetColor = function()
+			return ( 1 - self.Bar_Alpha:GetValue() ) * 255
+		end
+		
+		self.Bar_Alpha.SetColor = function( panel, alpha )
+			self.Bar_Alpha:SetValue( 1 - alpha / 255 )
+			self.Bar_Alpha:OnChange( alpha )
+		end
+		
+		self.Bar_Alpha.OnChange = function( panel, alpha )
+			RunConsoleCommand( self.convar .. "_a", alpha )
+		end
+	 
+	AddMenuText( "Alpha", 207, 182, self )
+	
+	
+	*/
 	self.button_defaults = vgui.Create( "PA_Function_Button", self )
 		self.button_defaults:SetPos(200, 5)
 		self.button_defaults:SetSize(90, 25)
@@ -913,12 +984,19 @@ function HSV_COLOUR_CONTROL:SetColor( H, S, V, A )
 	local col = HSVToColor( H, S, V )
 	col.a = A
 	self.ColorMixer:SetColor( col )
+	-- self.ColourCircle:SetColor( H, S )
+	-- self.Bar_Brightness:SetColor( V )
+	-- self.Bar_Alpha:SetColor( A )  
 end
 
 function HSV_COLOUR_CONTROL:GetColor()
 	local col = self.ColorMixer:GetColor()
 	local H, S, V = ColorToHSV( col )
 	local A = col.a
+	-- return self.ColorMixer:GetColor()
+	-- local H, S = self.ColourCircle:GetColor()
+	-- local V = self.Bar_Brightness:GetColor()
+	-- local A = self.Bar_Alpha:GetColor()
 	return H, S, V, A 
 end
 
@@ -928,10 +1006,10 @@ end
 
 vgui.Register("PA_ColourControl", HSV_COLOUR_CONTROL, "DPanel")
 
------------------------------------------------------------
---   Name: PA_Construct_Multiselect
---   Multi construct selection for displays/move constructs tabs
------------------------------------------------------------
+/*---------------------------------------------------------
+   Name: PA_Construct_Multiselect
+   Multi construct selection for displays/move constructs tabs
+---------------------------------------------------------*/
 
 local CONSTRUCT_MULTISELECT = {}
 function CONSTRUCT_MULTISELECT:Init()
@@ -1175,7 +1253,7 @@ end
 -- Open a particular tab in the manipulation panel
 local function Open_Manipulation_Tab( Tab )
 	PA_manipulation_panel.panel:SetActiveTab( Tab )
-	if not PA_manipulation_panel:IsVisible() then
+	if !PA_manipulation_panel:IsVisible() then
 		PA_manipulation_panel:SetVisible(true)
 	end
 end
@@ -1231,7 +1309,7 @@ function TOOL_POINT_PANEL:Init()
 	create_buttons_standard( self, "point" )
 	
 		self.button_view:SetFunction( function()
-			if not PA_funcs.construct_exists( "Point", PA_selected_point ) then return false end
+			if !PA_funcs.construct_exists( "Point", PA_selected_point ) then return false end
 			local point = PA_funcs.point_global( PA_selected_point )
 			return PA_funcs.set_playerview( point.origin )
 		end )
@@ -1265,12 +1343,12 @@ function TOOL_POINT_PANEL:Init()
 			local point1 = PA_funcs.point_global( PA_selected_point )
 			local point2 = PA_funcs.point_global( PA_selected_point2 )
 			
-			if not point1 or not point2 then
+			if !point1 or !point2 then
 				Warning("Points not correctly defined")
 				return false
 			end
 			
-			if not PA_funcs.move_entity(point1.origin, point2.origin, PA_activeent) then return false end
+			if !PA_funcs.move_entity(point1.origin, point2.origin, PA_activeent) then return false end
 		end )
 end
 
@@ -1311,7 +1389,7 @@ function TOOL_LINE_PANEL:Init()
 	create_buttons_standard( self, "line" )
 	
 		self.button_view:SetFunction( function()
-			if not PA_funcs.construct_exists( "Line", PA_selected_line ) then return false end
+			if !PA_funcs.construct_exists( "Line", PA_selected_line ) then return false end
 			local line = PA_funcs.line_global( PA_selected_line )
 			return PA_funcs.set_playerview( line.startpoint )
 		end )
@@ -1336,14 +1414,14 @@ function TOOL_LINE_PANEL:Init()
 		self.button_moveentity:SetToolTip( "Move entity by line" )
 		self.button_moveentity:SetFunction( function()
 			local line = PA_funcs.line_global(PA_selected_line)
-			if not line then
+			if !line then
 				Warning("Line not correctly defined")
 				return false
 			end
 			
 			local point1 = line.startpoint
 			local point2 = line.endpoint
-			if not PA_funcs.move_entity(point1, point2, PA_activeent) then return false end
+			if !PA_funcs.move_entity(point1, point2, PA_activeent) then return false end
 		end )
 end
 
@@ -1384,7 +1462,7 @@ function TOOL_PLANE_PANEL:Init()
 	create_buttons_standard( self, "plane" )
 	
 		self.button_view:SetFunction( function()
-			if not PA_funcs.construct_exists( "Plane", PA_selected_plane ) then return false end
+			if !PA_funcs.construct_exists( "Plane", PA_selected_plane ) then return false end
 			local plane = PA_funcs.plane_global( PA_selected_plane )
 			return PA_funcs.set_playerview( plane.origin )
 		end )
@@ -1614,10 +1692,10 @@ local function select_next_plane()
 	return false
 end
 
---Called when the server sends click data - used to add a new point/line
+-- Called when the server sends click data - used to add a new point/line
 local function umsg_click_hook()
-	local point = Vector( net.ReadFloat(), net.ReadFloat(), net.ReadFloat() )
-	local normal = Vector( net.ReadFloat(), net.ReadFloat(), net.ReadFloat() )
+	local point = Vector( net.ReadDouble(), net.ReadDouble(), net.ReadDouble() )
+	local normal = Vector( net.ReadDouble(), net.ReadDouble(), net.ReadDouble() )
 	local ent = net.ReadEntity()
 	
 	local shift = LocalPlayer():KeyDown( IN_SPEED )
@@ -1625,14 +1703,14 @@ local function umsg_click_hook()
 	
 	local tooltype = GetConVarNumber( PA_.. "tooltype" )
 	
-	--Points
+	-- Points
 	if tooltype <= 4 then
 		if shift then
 			select_next_point()
 		end
 		
 		PA_funcs.set_point(PA_selected_point, point)
-		--Auto-attach to selected ent
+		-- Auto-attach to selected ent
 		if alt then
 			if PA_activeent then
 				PA_funcs.attach_point( PA_selected_point, PA_activeent )
@@ -1643,19 +1721,19 @@ local function umsg_click_hook()
 			PA_funcs.attach_point( PA_selected_point, ent )
 		end
 		
-	--Lines
+	-- Lines
 	elseif tooltype == 5 then
 		if shift then
 			select_next_line()
 		end
 		
-		--Alt-click will place end point
+		-- Alt-click will place end point
 		if alt then
 			PA_funcs.set_line( PA_selected_line, nil, point, nil, nil )
 		else
 			PA_funcs.set_line( PA_selected_line, point, nil, nil, nil )
 			
-			--Only auto-attach by start point, not end point
+			-- Only auto-attach by start point, not end point
 			if PA_funcs.construct_exists( "Line", PA_selected_line ) and precision_align_lines[PA_selected_line].entity ~= ent then
 				PA_funcs.attach_line( PA_selected_line, ent )
 			end
@@ -1680,7 +1758,7 @@ local function umsg_click_hook()
 	elseif tooltype == 7 then
 		PA_funcs.set_line( PA_selected_line, nil, nil, normal, nil )
 		
-	--Planes
+	-- Planes
 	elseif tooltype == 8 then
 		if shift then
 			select_next_plane()
@@ -1703,7 +1781,7 @@ local function umsg_click_hook()
 end
 net.Receive( PA_ .. "click", umsg_click_hook )
 
---Called when the server sends entity data - so the client knows which entity is selected
+-- Called when the server sends entity data - so the client knows which entity is selected
 local function umsg_entity_hook()
 	PA_activeent = net.ReadEntity()
 end
@@ -1711,7 +1789,7 @@ net.Receive( PA_ .. "ent", umsg_entity_hook )
 
 
 --********************************************************************************************************************--
---HUD Display
+-- HUD Display
 --********************************************************************************************************************--
 
 
@@ -1777,6 +1855,11 @@ end
 
 -- HUD draw function	
 local function precision_align_draw( w, h)
+	-- Check if displayhud convar is enabled, if not we prevent any further execution
+	local displayHUD = GetConVar(string.format("%sdisplayhud",PA_)):GetBool()
+
+	if !displayHUD then return end
+
 	local playerpos = LocalPlayer():GetShootPos()
 	
 	-- Points
@@ -1964,23 +2047,13 @@ local function precision_align_draw( w, h)
 end
 hook.Add("HUDPaint", "draw_precision_align", precision_align_draw)
 
-
-local function precision_align_displayhud_func( ply, cmd, args )
-	local enabled = tobool( args[1] )
-	if not enabled then
-		hook.Remove( "HUDPaint", "draw_precision_align" )
-	else 
-		hook.Add("HUDPaint", "draw_precision_align", precision_align_draw)
-	end
-	return true
-end
-concommand.Add( PA_.."displayhud", precision_align_displayhud_func )
+-- Removed hook for "displayhud" as this was conflicting with the convar, seemingly causing performance issues on some platforms.
 
 PA_manipulation_panel = vgui.Create( "PA_Manipulation_Frame" )
 PA_manipulation_panel:SetVisible(false)
 
 local function precision_align_open_panel_func( ply, cmd, args )
-	if not PA_manipulation_panel then
+	if !PA_manipulation_panel then
 		local PA_manipulation_panel = vgui.Create( "PA_Manipulation_Frame" )
 	else
 		if PA_manipulation_panel:IsVisible() then
@@ -1992,4 +2065,4 @@ local function precision_align_open_panel_func( ply, cmd, args )
 		end
 	end
 end
-concommand.Add( PA_.."open_panel", precision_align_open_panel_func )
+concommand.Add( PA_.."open_panel", precision_align_open_panel_func ) /*
